@@ -1,10 +1,14 @@
-import tensorflow as tf
-from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout, BatchNormalization, GlobalAveragePooling2D
+from tensorflow.keras.models import load_model
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import (
+    Conv2D, MaxPooling2D, Dense, Flatten, Dropout,
+    BatchNormalization, GlobalAveragePooling2D
+)
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 from tensorflow.keras.applications import MobileNetV2
 import os
+import tensorflow as tf
 import numpy as np
 from sklearn.model_selection import train_test_split
 import shutil
@@ -25,8 +29,8 @@ def setup_dataset():
 
         # Print current working directory and check if folders exist
         print(f"Current working directory: {os.getcwd()}")
-        affected_path = "Iris_Tumor_Detection-main/Affected eyes"
-        normal_path = "Iris_Tumor_Detection-main/normal eyes"
+        affected_path = r"D:\iris tumor\Iris_Tumor_Detection\Affected eyes"
+        normal_path = r"D:\iris tumor\Iris_Tumor_Detection\normal eyes"
         
         print(f"Checking if directories exist:")
         print(f"Affected eyes path exists: {os.path.exists(affected_path)}")
@@ -131,6 +135,7 @@ def create_data_generators():
     )
 
     test_datagen = ImageDataGenerator(rescale=1./255)
+    
 
     return train_datagen, test_datagen
 
@@ -167,6 +172,9 @@ def train_model():
         class_mode='binary',
         subset='validation'
     )
+    print("Validation Generator:")
+    print(f"Found {validation_generator.samples} images belonging to {validation_generator.num_classes} classes.")
+    print(f"Class indices: {validation_generator.class_indices}")
 
     test_generator = test_datagen.flow_from_directory(
         os.path.join(base_dir, 'test'),
@@ -174,6 +182,9 @@ def train_model():
         batch_size=BATCH_SIZE,
         class_mode='binary'
     )
+    print("Test Generator:")
+    print(f"Found {test_generator.samples} images belonging to {test_generator.num_classes} classes.")
+    print(f"Class indices: {test_generator.class_indices}")
 
     print("Creating and compiling model...")
     model, base_model = create_model()
@@ -193,20 +204,21 @@ def train_model():
             min_lr=1e-6
         ),
         ModelCheckpoint(
-            'iris_tumor_cnn_model.h5',
+            filepath='iris_tumor_cnn_model.keras',
             monitor='val_loss',
             save_best_only=True,
-            mode='min'
+            mode='min',
+            
         )
     ]
 
     print("Training model (Phase 1 - Training only top layers)...")
     history1 = model.fit(
         train_generator,
-        epochs=20,
+        epochs=10,
         validation_data=validation_generator,
         callbacks=callbacks,
-        class_weight=class_weights
+        # class_weight=class_weights
     )
 
     print("\nFine-tuning the model...")
@@ -230,7 +242,7 @@ def train_model():
         epochs=30,
         validation_data=validation_generator,
         callbacks=callbacks,
-        class_weight=class_weights
+        # class_weight=class_weights
     )
 
     print("\nEvaluating model...")

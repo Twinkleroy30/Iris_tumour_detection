@@ -1,3 +1,4 @@
+from tensorflow.keras.models import load_model
 from flask import Flask, request, render_template
 import tensorflow as tf
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
@@ -10,13 +11,14 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-MODEL_PATH = "iris_tumor_cnn_model.h5"
+MODEL_PATH = "iris_tumor_cnn_model.keras"
 
 # Create uploads directory if it doesn't exist
 os.makedirs("uploads", exist_ok=True)
 
 # Load the trained model
-model = tf.keras.models.load_model(MODEL_PATH)
+model = load_model(MODEL_PATH)
+#model = tf.keras.models.load_model(MODEL_PATH)
 
 # Define image size
 IMG_SIZE = (224, 224)
