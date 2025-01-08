@@ -70,14 +70,20 @@ def index():
             confidence_percentage = f"{confidence * 100:.2f}%"
             
             logger.info(f"Final prediction: {result} with confidence {confidence_percentage}")
-
+            
+            #Get base64 encoded image 
+            import base64
+            with open(filepath, "rb") as img_file:
+                img_data = base64.b64encode(img_file.read()).decode('utf-8')
+                
             # Remove the uploaded file
             os.remove(filepath)
             
             return render_template("result.html", 
                                  result=result, 
                                  confidence=confidence_percentage,
-                                 raw_value=f"{prediction_value:.4f}")
+                                 raw_value=f"{prediction_value:.4f}",
+                                 image=img_data)
 
         except Exception as e:
             logger.error(f"Error processing image: {str(e)}")
