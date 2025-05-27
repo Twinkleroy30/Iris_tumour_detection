@@ -29,8 +29,8 @@ def setup_dataset():
 
         # Print current working directory and check if folders exist
         print(f"Current working directory: {os.getcwd()}")
-        affected_path = r"D:\iris tumor\Iris_Tumor_Detection\Affected eyes"
-        normal_path = r"D:\iris tumor\Iris_Tumor_Detection\normal eyes"
+        affected_path = r"D:\infosys_springboard\Iris_Tumor_Detection\Affected eyes"
+        normal_path = r"D:\infosys_springboard\Iris_Tumor_Detection\normal eyes"
         
         print(f"Checking if directories exist:")
         print(f"Affected eyes path exists: {os.path.exists(affected_path)}")

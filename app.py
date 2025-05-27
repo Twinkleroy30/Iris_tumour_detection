@@ -17,7 +17,7 @@ MODEL_PATH = "iris_tumor_cnn_model.keras"
 os.makedirs("uploads", exist_ok=True)
 
 # Load the trained model
-model = load_model(MODEL_PATH)
+model = load_model(MODEL_PATH, compile=False)
 #model = tf.keras.models.load_model(MODEL_PATH)
 
 # Define image size
